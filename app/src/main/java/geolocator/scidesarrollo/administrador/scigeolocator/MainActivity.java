@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,6 +47,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import geolocator.scidesarrollo.administrador.scigeolocator.Adapters.DrawerAdapter;
 import geolocator.scidesarrollo.administrador.scigeolocator.Classes.DrawerItem;
 import geolocator.scidesarrollo.administrador.scigeolocator.Utils.ItemClickSupport;
@@ -111,21 +121,85 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     private void setupListView() {
-        // Obtener el IMEI del teléfono
+        // Obtener el IMEI del teeono
         TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         deviceId = telephonyManager.getDeviceId();
 
         // TODO: A traves del IEMI de l telefono verificar las visitas del usuario
         listView = (ListView) findViewById(R.id.listView1);
-        ArrayAdapter<String> adapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_single_choice,visitasFalsas);
-        listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "Visita " + position, Toast.LENGTH_LONG).show();
+        TareaWSListar tarea = new TareaWSListar();
+        tarea.execute("354984054602948");
+
+    }
+
+    //Tarea Asíncrona para llamar al WS de listado en segundo plano
+    private class TareaWSListar extends AsyncTask<String,Integer,Boolean> {
+
+        private String[] visitas;
+
+        protected Boolean doInBackground(String... params) {
+
+            boolean resul = true;
+            String id = params[0];
+
+            HttpGet del =
+                    new HttpGet("http://186.147.35.26:8082/DeveloperServices/api/ProgVisita/ObtenerVisitas?idUser=" + id);
+
+            del.setHeader("content-type", "application/json");
+            HttpClient httpClient = new DefaultHttpClient();
+
+            try
+            {
+                HttpResponse resp = httpClient.execute(del);
+                String respStr = EntityUtils.toString(resp.getEntity());
+
+                JSONArray respJSON = new JSONArray(respStr);
+
+                visitas = new String[respJSON.length()];
+
+                for(int i=0; i<respJSON.length(); i++)
+                {
+                    JSONObject obj = respJSON.getJSONObject(i);
+
+                    int idVisitaPk = obj.getInt("progvis_IdVisita_Pk");
+                    String Direccion = obj.getString("progvis_Direccion");
+
+                    visitas[i] = "" + idVisitaPk + "-" + Direccion;
+                }
             }
-        });
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+                resul = false;
+            }
+
+            return resul;
+        }
+
+        protected void onPostExecute(Boolean result) {
+
+            if (result)
+            {
+                //Rellenamos la lista con los nombres de los clientes
+                //Rellenamos la lista con los resultados
+                ArrayAdapter<String> adapter= new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_single_choice,visitas);
+                listView.setAdapter(adapter);
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Toast.makeText(getApplicationContext(), "Visita " + position, Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                //ArrayAdapter<String> adaptador =
+                        //new ArrayAdapter<String>(MainActivity.this,
+                                //android.R.layout.simple_list_item_1, visitas);
+
+                //ListDirec.setAdapter(adaptador);
+            }
+        }
     }
 
     private void setupMap(){
@@ -178,7 +252,7 @@ public class MainActivity extends AppCompatActivity  {
             //String locationText = "Latitud :"+location.getLatitude() + "/ Longitud :" + location.getLongitude();
 
            // LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-           // mapa.addMarker(new MarkerOptions().position(latLng)).setTitle("Aquí estoy Yo");
+           // mapa.addMarker(new MarkerOptions().position(latLng)).setTitle("Aqui estoy Yo");
 
             //LatLngBounds bounds = new LatLngBounds(latLng,latLng);
             //mapa.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
