@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Geolocator Project</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Configuración</string>
+    <string name="drawer_open">open drawer</string>
+    <string name="drawer_close">close drawer</string>
+    <string name="about">Material Design App</string>
+    <string name="action_about">About</string>
+    <string name="website">desarrollador-android.com</string>
+    <string name="github">GitHub: github.com/scidesarrollo</string>
+    <string name="drawer_header_image">drawer header image</string>
+    <string name="manage_account">Administrar Cuenta</string>
+    <string name="add_account">Add  account</string>
+    <string name="name">Fabio Alonso Posada</string>
+    <string name="email">fabioposm@gmail.com</string>
+    <string name="help">Ayuda</string>
+    <string name="Acciones">Acciones</string>
+    <string name="acciones">Acciones</string>
+
+</resources>
