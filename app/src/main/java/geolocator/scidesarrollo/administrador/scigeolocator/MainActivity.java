@@ -1,6 +1,7 @@
 package geolocator.scidesarrollo.administrador.scigeolocator;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
@@ -133,7 +134,6 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-    //Tarea Asíncrona para llamar al WS de listado en segundo plano
     private class TareaWSListar extends AsyncTask<String,Integer,Boolean> {
 
         private String[] visitas;
@@ -798,6 +798,18 @@ public class MainActivity extends AppCompatActivity  {
         ImageView imageViewDrawerItemIcon = (ImageView) rv.getChildAt(position).findViewById(R.id.imageViewDrawerItemIcon);
         TextView textViewDrawerItemTitle = (TextView) rv.getChildAt(position).findViewById(R.id.textViewDrawerItemTitle);
         LinearLayout linearLayoutItem = (LinearLayout) rv.getChildAt(position).findViewById(R.id.linearLayoutItem);
+        String txt = textViewDrawerItemTitle.getText().toString();
+        switch (txt)
+        {
+            case "Bandeja":
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                break;
+            case "Servicios":
+                startActivity(new Intent(getApplicationContext(),ServiciosActivity.class));
+                break;
+
+
+        }
 
     }
 

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/SciGeolocator.iml" filepath="$PROJECT_DIR$/SciGeolocator.iml" />
       <module fileurl="file://$PROJECT_DIR$/SciGeolocatorProject.iml" filepath="$PROJECT_DIR$/SciGeolocatorProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
